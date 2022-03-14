@@ -22,3 +22,6 @@ GRTAGS
 logs
 old
 tmp/
+
+# Idris
+/impls/idris2/build/
