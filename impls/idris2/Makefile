@@ -1,18 +1,23 @@
 IDRIS2_LIBDIR := $(shell idris2 --libdir)
 
+BIN_DIR := build/exec
+STEP1_NAME := step1_read_print
 STEP0_BIN := build/exec/step0_repl
 
-READLINE_LN := build/exec/step0_repl_app/libidrisreadline.dylib
 READLINE_DYLIB := $(IDRIS2_LIBDIR)/readline/lib/libidrisreadline.dylib
 
-step0_repl: $(STEP0_BIN) $(READLINE_LN)
-	@echo "#!/usr/bin/env bash"         >  step0_repl
-	@echo ""                            >> step0_repl
-	@echo "exec $(STEP0_BIN) \"$${@}\"" >> step0_repl
-	chmod 700 step0_repl
+# prevent deletion of implicit intermediates
+.SECONDARY:
 
-$(STEP0_BIN): src/Step0Repl.idr
-	idris2 -p readline --source-dir src -o step0_repl src/Step0Repl.idr 
+step%: $(BIN_DIR)/step% step%_readline
+	@echo "#!/usr/bin/env bash" >  $(@)
+	@echo ""                    >> $(@)
+	@echo "exec $(<) \"$${@}\"" >> $(@)
+	chmod 700 $(@)
 
-$(READLINE_LN): $(READLINE_DYLIB)
-	ln -s $(READLINE_DYLIB) $(READLINE_LN)
+$(BIN_DIR)/step% : src/Step%.idr
+	idris2 -p readline --source-dir src -o step$(*) $(<)
+
+step%_readline: $(READLINE_DYLIB)
+	ln -fs $(READLINE_DYLIB) \
+		build/exec/step$(*)_app/libidrisreadline.dylib
