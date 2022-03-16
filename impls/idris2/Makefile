@@ -1,10 +1,5 @@
-IDRIS2_LIBDIR := $(shell idris2 --libdir)
-
 BIN_DIR := build/exec
-STEP1_NAME := step1_read_print
-STEP0_BIN := build/exec/step0_repl
-
-READLINE_DYLIB := $(IDRIS2_LIBDIR)/readline/lib/libidrisreadline.dylib
+READLINE_DYLIB := $(shell idris2 --libdir)/readline/lib/libidrisreadline.dylib
 
 # prevent deletion of implicit intermediates
 .SECONDARY:
