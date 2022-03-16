@@ -10,10 +10,7 @@ READLINE_DYLIB := $(IDRIS2_LIBDIR)/readline/lib/libidrisreadline.dylib
 .SECONDARY:
 
 step%: $(BIN_DIR)/step% step%_readline
-	@echo "#!/usr/bin/env bash" >  $(@)
-	@echo ""                    >> $(@)
-	@echo "exec $(<) \"$${@}\"" >> $(@)
-	chmod 700 $(@)
+	ln -fs $(<) $(@)
 
 $(BIN_DIR)/step% : src/Step%.idr
 	idris2 -p readline --source-dir src -o step$(*) $(<)
